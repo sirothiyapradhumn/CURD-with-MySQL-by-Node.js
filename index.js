@@ -13,7 +13,8 @@ const mysqlConnection = mysql.createConnection({
     port: 3307,
     user: 'root',
     password: 'root',
-    database: 'employeedb'
+    database: 'employeedb',
+    multipleStatements: true
   });
 
 
@@ -57,3 +58,17 @@ mysqlConnection.query('SELECT * FROM employee WHERE EmpID = ?', [req.params.id],
     }
 })
 });
+
+
+// Delete an employee
+app.delete('/employee/:id', (req, res)=>{
+    mysqlConnection.query('DELETE FROM employee WHERE EmpID = ?', [req.params.id], (err, rows, fields) =>{
+        if(!err){
+            res.send('Delete successfully.');
+        }
+        else{
+            console.log(err);
+        }
+    })
+});
+
