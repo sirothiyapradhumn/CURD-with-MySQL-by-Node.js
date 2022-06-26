@@ -14,7 +14,7 @@ const mysqlConnection = mysql.createConnection({
     user: 'root',
     password: 'root',
     database: 'employeedb',
-    multipleStatements: true
+    multipleStatements: true  // use for execute multiple statement query line no. 79
   });
 
 
@@ -72,3 +72,42 @@ app.delete('/employee/:id', (req, res)=>{
     })
 });
 
+
+// Insert an employee
+app.post('/employee', (req, res) => {
+    let emp = req.body;
+    var sql = "SET @EmpID = ?;SET @Name = ?;SET @EmpCode = ?;SET @Salary = ?; \
+    CALL EmployeeAddOrEdit(@EmpID,@Name,@EmpCode,@Salary);";
+    mysqlConnection.query(sql, [emp.EmpID, emp.Name, emp.EmpCode, emp.Salary], (err, rows, fields) => {
+        if (!err)
+            rows.forEach(element => {
+                if(element.constructor == Array)
+                res.send('Inserted employee id : '+element[0].EmpID);
+            });
+        else
+            console.log(err);
+    })
+});
+
+/*  use this in postman for req post 
+{
+    "EmpID":0,
+    "Name": "Green Fiona",
+    "EmpCode": "EMP934",
+    "Salary": 415600
+}
+
+*/
+
+// update an employee
+app.put('/employee', (req, res) => {
+    let emp = req.body;
+    var sql = "SET @EmpID = ?;SET @Name = ?;SET @EmpCode = ?;SET @Salary = ?; \
+    CALL EmployeeAddOrEdit(@EmpID,@Name,@EmpCode,@Salary);";
+    mysqlConnection.query(sql, [emp.EmpID, emp.Name, emp.EmpCode, emp.Salary], (err, rows, fields) => {
+        if (!err)
+            res.send("Update successfully");
+        else
+            console.log(err);
+    })
+});
